@@ -14,18 +14,12 @@ router.get("/", postController.getAllPosts);
 router.post("/", protected, postController.createPost);
 
 // GET a single post
-router.get("/:id", (req, res) => {
-  res.send("Get a post");
-});
+router.get("/:postId", protected, postController.getSinglePost);
 
 // PUT update a post
-router.put("/:id", (req, res) => {
-  res.send("update a post");
-});
+router.put("/:postId", protected, postController.updatePost);
 
 // DELETE a post
-router.delete("/:id", (req, res) => {
-  res.send("DELETE a post");
-});
+router.delete("/:postId", protected, postController.deletePost);
 
 module.exports = router;
