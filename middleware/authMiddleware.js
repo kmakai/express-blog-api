@@ -9,7 +9,7 @@ const protected = asyncHandler(async (req, res, next) => {
 
   let token;
 
-  if (authorization && authorization.startsWith(Bearer)) {
+  if (authorization && authorization.startsWith("Bearer")) {
     try {
       // get token from authoriztion header
       token = authorization.split(" ")[1];
