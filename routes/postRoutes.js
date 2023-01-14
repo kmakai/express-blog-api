@@ -10,6 +10,9 @@ const postController = require("../controllers/postController");
 // GET get all posts
 router.get("/", postController.getAllPosts);
 
+// GET All AUTHOR POSTS
+router.get("/author", protected, postController.getAuthorPosts);
+
 // POST create a new post
 router.post("/", protected, postController.createPost);
 

@@ -13,6 +13,19 @@ const getAllPosts = asyncHandler(async (req, res) => {
   res.status(200).json(posts);
 });
 
+const getAuthorPosts = asyncHandler(async (req, res) => {
+  if (!req.user.isAuthor) {
+    res.status(401);
+    throw new Error("User is not authorized");
+  }
+
+  const posts = await Post.find({ author: req.user.id }).sort({
+    createdAt: "desc",
+  });
+
+  res.status(200).json(posts);
+});
+
 const getSinglePost = asyncHandler(async (req, res) => {
   const post = await Post.findById(req.params.postId);
 
@@ -251,6 +264,7 @@ const deletComment = asyncHandler(async (req, res) => {
 
 module.exports = {
   getAllPosts,
+  getAuthorPosts,
   createPost,
   getSinglePost,
   updatePost,
