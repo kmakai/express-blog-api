@@ -8,6 +8,11 @@ const commentSchema = new Schema(
       required: true,
       ref: "User",
     },
+    post: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "Post",
+    },
     text: { type: String, required: [true, "Comments must have some text"] },
   },
   {

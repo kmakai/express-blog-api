@@ -1,8 +1,9 @@
 const asyncHandler = require("express-async-handler");
 
-// import post and user models
+// import post, comment and user models
 const Post = require("../models/Post");
 const User = require("../models/User");
+const Comment = require("../models/Comment");
 
 const getAllPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find({ published: true }).sort({
@@ -125,10 +126,138 @@ const deletePost = asyncHandler(async (req, res) => {
   });
 });
 
+/* CONTROLLERS FOR COMMENTS */
+
+const getPostComments = asyncHandler(async (req, res) => {
+  // check if post exists
+  const post = await Post.findById(req.params.postId);
+
+  if (!post) {
+    res.status(404);
+    throw new Error("Post not found");
+  }
+
+  //get comments
+  const comments = await Comment.find({ post: req.params.postId }).sort({
+    createdAt: "asc",
+  });
+
+  res.status(200).json(comments);
+});
+
+const createPostComment = asyncHandler(async (req, res) => {
+  const { user } = req;
+  if (!user) {
+    res.status(401);
+    throw new Error("No user found please login or register");
+  }
+
+  // check if post exists
+  const post = await Post.findById(req.params.postId);
+
+  if (!post) {
+    res.status(404);
+    throw new Error("Post not found");
+  }
+
+  // check text
+  const { text } = req.body;
+
+  if (!text) {
+    res.status(400);
+    throw new Error("body text is required for comment");
+  }
+
+  const comment = await Comment.create({
+    user: user.id,
+    post: post._id,
+    text,
+  });
+
+  res.status(200).json(comment);
+});
+
+const getSinglePostComment = asyncHandler(async (req, res) => {
+  // check if post exists
+  const post = await Post.findById(req.params.postId);
+
+  if (!post) {
+    res.status(404);
+    throw new Error("Post not found");
+  }
+
+  const comment = await Comment.findById(req.params.commentId);
+
+  res.status(200).json(comment);
+});
+
+const updateComment = asyncHandler(async (req, res) => {
+  const comment = await Comment.findById(req.params.commentId);
+
+  if (!comment) {
+    res.status(404);
+    throw new Error("Comment not found");
+  }
+
+  // check text
+  const { text } = req.body;
+
+  if (!text) {
+    res.status(400);
+    throw new Error("body text is required for comment");
+  }
+
+  if (comment.user.toString() !== req.user.id) {
+    res.status(401);
+    throw new Error("User not authorized");
+  }
+
+  const updatedComment = await Comment.findByIdAndUpdate(
+    req.params.commentId,
+    req.body,
+    { new: true }
+  );
+
+  res.status(200).json(updatedComment);
+});
+
+const deletComment = asyncHandler(async (req, res) => {
+  const comment = await Comment.findById(req.params.commentId);
+
+  if (!comment) {
+    res.status(404);
+    throw new Error("Comment not found");
+  }
+
+  // check text
+  const { text } = req.body;
+
+  if (!text) {
+    res.status(400);
+    throw new Error("body text is required for comment");
+  }
+
+  if (comment.user.toString() !== req.user.id) {
+    res.status(401);
+    throw new Error("User not authorized");
+  }
+
+  await comment.remove();
+
+  res.status(200).json({
+    success: true,
+  });
+});
+
 module.exports = {
   getAllPosts,
   createPost,
   getSinglePost,
   updatePost,
   deletePost,
+  getPostComments,
+  createPostComment,
+  getSinglePostComment,
+  updateComment,
+  deletComment,
 };
