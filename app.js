@@ -5,6 +5,7 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const connectDB = require("./config/db");
+const cors = require("cors");
 
 const indexRouter = require("./routes/index");
 
@@ -13,6 +14,7 @@ const app = express();
 // Connect to database
 connectDB();
 
+app.use(cors());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
