@@ -17,7 +17,7 @@ router.get("/author", protected, postController.getAuthorPosts);
 router.post("/", protected, postController.createPost);
 
 // GET a single post
-router.get("/:postId", protected, postController.getSinglePost);
+router.get("/:postId", postController.getSinglePost);
 
 // PUT update a post
 router.put("/:postId", protected, postController.updatePost);
@@ -28,7 +28,7 @@ router.delete("/:postId", protected, postController.deletePost);
 /*  ROUTES FOR COMMENTS  */
 
 // GET all comments for a post;
-router.get("/:postId/comments", protected, postController.getPostComments);
+router.get("/:postId/comments", postController.getPostComments);
 
 // POST a comment on a post
 router.post("/:postId/comments", protected, postController.createPostComment);

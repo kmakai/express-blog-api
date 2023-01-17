@@ -39,11 +39,13 @@ const getSinglePost = asyncHandler(async (req, res) => {
     throw new Error("post not found");
   }
 
-  const user = await User.findById(req.user.id);
+  if (!post.published) {
+    const user = await User.findById(req.user.id);
 
-  if (!post.published && !user.isAuthor) {
-    res.status(401);
-    throw new Error("You cannot see this post");
+    if (!user || !user.isAuthor) {
+      res.status(401);
+      throw new Error("You cannot see this post");
+    }
   }
 
   res.status(200).json(post);
@@ -156,9 +158,11 @@ const getPostComments = asyncHandler(async (req, res) => {
   }
 
   //get comments
-  const comments = await Comment.find({ post: req.params.postId }).sort({
-    createdAt: "asc",
-  });
+  const comments = await Comment.find({ post: req.params.postId })
+    .populate("user", "name")
+    .sort({
+      createdAt: "asc",
+    });
 
   res.status(200).json(comments);
 });
