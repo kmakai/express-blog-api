@@ -6,9 +6,11 @@ const User = require("../models/User");
 const Comment = require("../models/Comment");
 
 const getAllPosts = asyncHandler(async (req, res) => {
-  const posts = await Post.find({ published: true }).sort({
-    createdAt: "desc",
-  });
+  const posts = await Post.find({ published: true })
+    .populate("author", "name")
+    .sort({
+      createdAt: "asc",
+    });
 
   res.status(200).json(posts);
 });
@@ -27,7 +29,10 @@ const getAuthorPosts = asyncHandler(async (req, res) => {
 });
 
 const getSinglePost = asyncHandler(async (req, res) => {
-  const post = await Post.findById(req.params.postId);
+  const post = await Post.findById(req.params.postId).populate(
+    "author",
+    "name"
+  );
 
   if (!post) {
     res.status(404);
