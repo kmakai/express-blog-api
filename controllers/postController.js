@@ -168,7 +168,9 @@ const getPostComments = asyncHandler(async (req, res) => {
 });
 
 const createPostComment = asyncHandler(async (req, res) => {
-  const { user } = req;
+  const user = req.user;
+  console.log(req.body.text);
+
   if (!user) {
     res.status(401);
     throw new Error("No user found please login or register");
