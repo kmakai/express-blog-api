@@ -42,9 +42,11 @@ const getSinglePost = asyncHandler(async (req, res) => {
   if (!post.published) {
     const user = await User.findById(req.user.id);
 
-    if (!user || !user.isAuthor) {
+    if (!user.isAuthor) {
       res.status(401);
       throw new Error("You cannot see this post");
+    } else {
+      res.status(200).json(post);
     }
   }
 

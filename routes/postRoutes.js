@@ -17,7 +17,7 @@ router.get("/author", protected, postController.getAuthorPosts);
 router.post("/", protected, postController.createPost);
 
 // GET a single post
-router.get("/:postId", postController.getSinglePost);
+router.get("/:postId", protected, postController.getSinglePost);
 
 // PUT update a post
 router.put("/:postId", protected, postController.updatePost);
