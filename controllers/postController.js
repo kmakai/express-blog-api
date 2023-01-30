@@ -212,12 +212,16 @@ const getSinglePostComment = asyncHandler(async (req, res) => {
     throw new Error("Post not found");
   }
 
-  const comment = await Comment.findById(req.params.commentId);
+  const comment = await Comment.findById(req.params.commentId).populate(
+    "user",
+    "name"
+  );
 
   res.status(200).json(comment);
 });
 
 const updateComment = asyncHandler(async (req, res) => {
+  console.log(req.body);
   const comment = await Comment.findById(req.params.commentId);
 
   if (!comment) {
@@ -231,11 +235,6 @@ const updateComment = asyncHandler(async (req, res) => {
   if (!text) {
     res.status(400);
     throw new Error("body text is required for comment");
-  }
-
-  if (comment.user.toString() !== req.user.id) {
-    res.status(401);
-    throw new Error("User not authorized");
   }
 
   const updatedComment = await Comment.findByIdAndUpdate(
