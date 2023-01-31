@@ -102,11 +102,6 @@ const updatePost = asyncHandler(async (req, res) => {
     throw new Error("User is not an author");
   }
 
-  if (post.author.toString() !== req.user.id) {
-    res.status(401);
-    throw new Error("User not authorized");
-  }
-
   const updatedPost = await Post.findByIdAndUpdate(
     req.params.postId,
     req.body,
@@ -134,11 +129,6 @@ const deletePost = asyncHandler(async (req, res) => {
   if (!user.isAuthor) {
     res.status(401);
     throw new Error("User is not an author");
-  }
-
-  if (post.author.toString() !== req.user.id) {
-    res.status(401);
-    throw new Error("User not authorized");
   }
 
   await post.remove();
@@ -254,15 +244,7 @@ const deletComment = asyncHandler(async (req, res) => {
     throw new Error("Comment not found");
   }
 
-  // check text
-  const { text } = req.body;
-
-  if (!text) {
-    res.status(400);
-    throw new Error("body text is required for comment");
-  }
-
-  if (comment.user.toString() !== req.user.id) {
+  if (!req.user.isAuthor) {
     res.status(401);
     throw new Error("User not authorized");
   }
