@@ -39,7 +39,7 @@ const getSinglePost = asyncHandler(async (req, res) => {
     throw new Error("post not found");
   }
 
-  if (!post.published) {
+  if (req.user && !post.published) {
     const user = await User.findById(req.user.id);
 
     if (!user.isAuthor) {
